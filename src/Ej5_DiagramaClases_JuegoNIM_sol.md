@@ -60,7 +60,7 @@ La validación debe estar en JuegoNIM, no en Jugador. El juego conoce el estado 
 
 ## Diagrama de Clases
 
-![Diagrama de Clases - Juego del NIM](assets/Ej5_JuegoNIM.svg)
+![Diagrama de Clases - Juego del NIM](../assets/Ej5_JuegoNIM.svg)
 
 ## Código PlantUML
 
@@ -526,3 +526,4 @@ Análisis de movimientos óptimos:
 **Archivo de diagrama**: `assets/Ej5_JuegoNIM.svg`
 **Nivel de dificultad**: Básico
 **Conceptos principales**: Agregación, Gestión de Turnos, Algoritmos de Juego
+
