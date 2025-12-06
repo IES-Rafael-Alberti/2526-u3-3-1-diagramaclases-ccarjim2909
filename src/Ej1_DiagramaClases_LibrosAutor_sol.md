@@ -126,11 +126,8 @@ class Autor(
     private val nacionalidad: String,
     private val fechaNacimiento: String // Usamos String simple para Date en este ejemplo
 ) {
-    private val librosEscritos: MutableList<Libro> = mutableListOf()
-
     fun escribir()
     fun getNombreCompleto()
-    fun agregarLibro()
 
 }
 
@@ -142,9 +139,7 @@ class Libro(
     private val isbn: String
     private val numeroPaginas: Int
     private val precio: Double
-    private val autor: Autor
 ) {
-
     fun leer()
     fun getTitulo()
     fun getPrecio()
@@ -153,3 +148,4 @@ class Libro(
 
 
 ```
+
