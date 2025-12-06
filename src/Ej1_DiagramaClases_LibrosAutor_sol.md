@@ -1,55 +1,78 @@
-Solución: Ejercicio 1: Diagrama de Clases - Sistema de Libros y Autores
-=============================================================
-=====================================
+Solución: Ejercicio 1 - Sistema de Libros y Autores
+===================================================
 
-📚 Análisis del Problema y Clases
----------------------------------
+Análisis del Problema
+---------------------
 
-Este sistema es sencillo y se centra en dos entidades principales: **Autor** y **Libro**. La clase coordinadora (`JuegoNIM` en el ejemplo anterior) no es necesaria aquí, ya que el sistema es un modelo de datos.
+### Identificación de Clases
 
-### 1\. Identificación de Clases
+Del análisis de las especificaciones, identificamos las siguientes clases:
 
--   **Autor:** Entidad que crea el contenido. Necesita almacenar datos personales.
+1.  **Autor**
 
--   **Libro:** Entidad que almacena la información del contenido.
+    -   Clase que representa al creador de las obras.
 
-### 2\. Análisis de Relaciones
+    -   Atributos: nombre, apellido, nacionalidad, fechaNacimiento.
 
-La relación clave es la que conecta al escritor con su obra:
+    -   Métodos: escribir(), getNombreCompleto().
 
--   **Tipo de Relación:** Asociación simple (Unidireccional o Bidireccional, pero siguiendo la pauta "Autor escribe Libro", se modelará como una asociación clara).
+2.  **Libro**
 
--   **Cardinalidad:**
+    -   Clase que representa la obra escrita.
 
-    -   Un **Autor** puede escribir **uno o varios Libros** (`1..*`).
+    -   Atributos: titulo, isbn, numeroPaginas, precio.
+
+    -   Métodos: leer(), getTitulo(), getPrecio().
+
+Análisis de Relaciones
+----------------------
+
+### 1\. Asociación (Autor - Libro)
+
+-   **Nombre**: "escribe" / "es escrito por"
+
+-   **Tipo**: Asociación Unidireccional o Bidireccional. (Se puede modelar internamente con una lista de libros en `Autor`).
+
+-   **Cardinalidad**:
+
+    -   Un **Autor** escribe **uno o varios Libros** (`1..*`).
 
     -   Un **Libro** es escrito por **un único Autor** (`1`).
 
--   **Roles:** El rol desde `Autor` hacia `Libro` es **"escribe"**.
+-   **Justificación**: Es una relación fundamental de **uno a muchos (1:N)**. La asociación permite que el autor y el libro existan como entidades separadas pero relacionadas.
 
-* * * * *
+Tabla de Roles y Cardinalidades
+-------------------------------
 
-🧩 Diagrama de Clases UML
--------------------------
+| **Relación** | **Clase Origen** | **Rol Origen** | **Cardinalidad Origen** | **Clase Destino** | **Rol Destino** | **Cardinalidad Destino** |
+| --- | --- | --- | --- | --- | --- | --- |
+| Asociación | Autor | escribe | 1..* | Libro | es escrito por | 1 |
 
-### Tabla de Clases, Propiedades y Métodos
+Decisiones de Diseño
+--------------------
 
-| **Clase** | **Propiedades (Visibilidad)** | **Métodos (Visibilidad)** |
-| --- | --- | --- |
-| **Autor** | -nombre: String | +escribir(): void |
-|  | -apellido: String | +getNombreCompleto(): String {derived} |
-|  | -nacionalidad: String |  |
-|  | -fechaNacimiento: Date |  |
-| **Libro** | -titulo: String | +leer(): void |
-|  | -isbn: String | +getTitulo(): String |
-|  | -numeroPaginas: Int | +getPrecio(): Decimal |
-|  | -precio: Decimal |  |
+### Visibilidad y Encapsulación
 
-### Código PlantUML
+Todas las propiedades son **privadas (`-`)** (`nombre`, `apellido`, etc.) para proteger el estado de la clase. Los métodos de acción y consulta son **públicos (`+`)**.
+
+### Campo Derivado
+
+El método `getNombreCompleto()` se define como **{derived}** para indicar que su valor se calcula (`$nombre $apellido`) y no se almacena como un atributo físico.
+
+### Tipos de Datos
+
+Se utiliza `Date` para la fecha de nacimiento y `Decimal` para el precio, ya que es más adecuado para representar valores monetarios.
+
+Diagrama de Clases
+------------------
+![Diagrama](../assets/Ej1_LibrosAutor.png)
+
+Código PlantUML
+---------------
 
 Fragmento de código
 
-```
+```plantuml
 @startuml SistemaBiblioteca
 
 skinparam classAttributeIconSize 0
@@ -59,88 +82,74 @@ skinparam class {
     ArrowColor Black
 }
 
-' Clase Autor
+
 class Autor {
     - nombre: String
     - apellido: String
     - nacionalidad: String
     - fechaNacimiento: Date
-    --
     + escribir(): void
-    + getNombreCompleto(): String {derived}
+    + getNombreCompleto(): String
 }
 
-' Clase Libro
+
 class Libro {
     - titulo: String
     - isbn: String
     - numeroPaginas: Int
     - precio: Decimal
-    --
     + leer(): void
     + getTitulo(): String
     + getPrecio(): Decimal
 }
 
-' Relación entre Autor y Libro
-' Autor escribe 1 o más Libros (1..*)
-' Libro es escrito por 1 Autor (1)
 
 Autor "1" -- "1..*" Libro : escribe >
 
-note right of Autor::getNombreCompleto
-    Campo derivado:
-    Se calcula a partir de
-    {nombre + " " + apellido}
-end note
 
 @enduml
 
 ```
 
-### 🖼️ Diagrama Generado
+Implementación en Kotlin
+------------------------
 
-* * * * *
+Kotlin
 
-🔍 Justificación de Decisiones
-------------------------------
+```kotlin
+/**
+ * Clase que representa a un Autor
+ */
+class Autor(
+    private val nombre: String,
+    private val apellido: String,
+    private val nacionalidad: String,
+    private val fechaNacimiento: String // Usamos String simple para Date en este ejemplo
+) {
+    private val librosEscritos: MutableList<Libro> = mutableListOf()
 
-1.  **Visibilidad y Encapsulación:** Todos los atributos se han definido como **privados (`-`)** para proteger el estado interno de las clases, mientras que los métodos de comportamiento y acceso (getters) son **públicos (`+`)**.
+    fun escribir()
+    fun getNombreCompleto()
+    fun agregarLibro()
 
-2.  **Campo Derivado (`{derived}`):** El método `getNombreCompleto()` se ha marcado con la restricción `{derived}` para indicar que su valor no se almacena directamente, sino que se calcula en tiempo de ejecución a partir de los atributos `-nombre` y `-apellido`.
-
-3.  **Cardinalidad:**
-
-    -   `Autor "1"`: Un libro **debe** tener un autor.
-
-    -   `Libro "1..*"`: Un autor puede escribir **uno o más** libros. La notación `1..*` (uno a muchos) modela el requisito de que "un Autor escribe uno o varios Libros".
-
-4.  **Rol:** La relación se etiqueta con el rol **"escribe"** y la flecha de dirección indica el flujo de la acción.
-
-* * * * *
-
-💡 Lógica Clave / Pseudocódigo
-------------------------------
-
-### Pseudocódigo para `getNombreCompleto()` (Clase Autor)
-
-```
-fun getNombreCompleto(): String
-    retornar nombre + " " + apellido
-
-```
-
-### Pseudocódigo para el Algoritmo de Relación
-
-La relación de **uno a muchos (1..*)** se implementa internamente en la clase `Autor` mediante una lista o colección de objetos `Libro`.
-
-```
-class Autor {
-    // ... atributos ...
-    private librosEscritos: List<Libro>  // Colección interna para la relación 1..*
-
-    fun escribirLibro(libro: Libro): void
-        this.librosEscritos.agregar(libro)
-        libro.asignarAutor(this)
 }
+
+/**
+ * Clase que representa un Libro
+ */
+class Libro(
+    private val titulo: String
+    private val isbn: String
+    private val numeroPaginas: Int
+    private val precio: Double
+    private val autor: Autor
+) {
+
+    fun leer()
+    fun getTitulo()
+    fun getPrecio()
+
+}
+
+
 ```
